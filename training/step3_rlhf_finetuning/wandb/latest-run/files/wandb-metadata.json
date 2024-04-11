@@ -1,0 +1,479 @@
+{
+    "os": "Linux-3.10.0-1160.62.1.el7.x86_64-x86_64-with-glibc2.17",
+    "python": "3.10.12",
+    "heartbeatAt": "2024-01-17T18:04:17.755971",
+    "startedAt": "2024-01-17T18:04:16.426195",
+    "docker": null,
+    "cuda": null,
+    "args": [
+        "--local_rank=0",
+        "--data_path",
+        "Dahoas/rm-static",
+        "--data_split",
+        "2,4,4",
+        "--data_output_path",
+        "/tmp/data_files_jh",
+        "--actor_model_name_or_path",
+        "/home/sist/sakuraumi/test/qwen-7b-onefile",
+        "--critic_model_name_or_path",
+        "/home/sist/sakuraumi/test/qwen-7b-onefile",
+        "--num_padding_at_beginning",
+        "0",
+        "--per_device_generation_batch_size",
+        "2",
+        "--per_device_training_batch_size",
+        "2",
+        "--generation_batches",
+        "1",
+        "--ppo_epochs",
+        "1",
+        "--max_answer_seq_len",
+        "512",
+        "--max_prompt_seq_len",
+        "2048",
+        "--actor_learning_rate",
+        "9.65e-6",
+        "--critic_learning_rate",
+        "5e-6",
+        "--actor_weight_decay",
+        "0.1",
+        "--critic_weight_decay",
+        "0.1",
+        "--num_train_epochs",
+        "1",
+        "--lr_scheduler_type",
+        "cosine",
+        "--gradient_accumulation_steps",
+        "16",
+        "--actor_gradient_checkpointing",
+        "--critic_gradient_checkpointing",
+        "--offload_reference_model",
+        "--actor_dropout",
+        "0.0",
+        "--num_warmup_steps",
+        "10",
+        "--deepspeed",
+        "--seed",
+        "1234",
+        "--actor_zero_stage",
+        "2",
+        "--critic_zero_stage",
+        "2",
+        "--actor_lora_dim",
+        "32",
+        "--critic_lora_dim",
+        "32",
+        "--lora_alpha",
+        "32",
+        "--critic_lora_module_name",
+        "h.",
+        "--actor_lora_module_name",
+        "h.",
+        "--output_dir",
+        "/home/sist/sakuraumi/model/chatgpt/rlaif/rlaif_step3_qwen_test2_lora1e-5_promptlen2048_answerlen512_loradim32_batchsize_2_asleep-1_gas16_kf0.01_kc2",
+        "--enable_tensorboard",
+        "--tensorboard_path",
+        "/home/sist/sakuraumi/model/chatgpt/rlaif/rlaif_step3_qwen_test2_lora1e-5_promptlen2048_answerlen512_loradim32_batchsize_2_asleep-1_gas16_kf0.01_kc2/tensorboard",
+        "--print_answers",
+        "--enable_test_mode",
+        "--test_stop_step",
+        "3000",
+        "--compute_fp32_loss",
+        "--actor_lora_learning_rate",
+        "1e-5",
+        "--critic_lora_learning_rate",
+        "1e-5",
+        "--kl_ctl",
+        "0.01",
+        "--clip_reward_value",
+        "5",
+        "--kl_appoximation",
+        "--kl_clip",
+        "2",
+        "--dtype",
+        "bf16",
+        "--actor_sleep",
+        "-1"
+    ],
+    "state": "running",
+    "program": "/home/sist/sakuraumi/code/chatgpt/rlaif/training/step3_rlhf_finetuning/main.py",
+    "codePathLocal": "main.py",
+    "codePath": "main.py",
+    "host": "gnode-a100-6",
+    "username": "sakuraumi",
+    "executable": "/home/sist/sakuraumi/miniconda3/envs/baichuan/bin/python3.10",
+    "cpu_count": 64,
+    "cpu_count_logical": 64,
+    "cpu_freq": {
+        "current": 1087.5,
+        "min": 800.0,
+        "max": 3400.0
+    },
+    "cpu_freq_per_core": [
+        {
+            "current": 800.0,
+            "min": 800.0,
+            "max": 3400.0
+        },
+        {
+            "current": 800.0,
+            "min": 800.0,
+            "max": 3400.0
+        },
+        {
+            "current": 900.0,
+            "min": 800.0,
+            "max": 3400.0
+        },
+        {
+            "current": 800.0,
+            "min": 800.0,
+            "max": 3400.0
+        },
+        {
+            "current": 800.0,
+            "min": 800.0,
+            "max": 3400.0
+        },
+        {
+            "current": 800.0,
+            "min": 800.0,
+            "max": 3400.0
+        },
+        {
+            "current": 800.0,
+            "min": 800.0,
+            "max": 3400.0
+        },
+        {
+            "current": 800.0,
+            "min": 800.0,
+            "max": 3400.0
+        },
+        {
+            "current": 800.0,
+            "min": 800.0,
+            "max": 3400.0
+        },
+        {
+            "current": 800.0,
+            "min": 800.0,
+            "max": 3400.0
+        },
+        {
+            "current": 800.0,
+            "min": 800.0,
+            "max": 3400.0
+        },
+        {
+            "current": 800.0,
+            "min": 800.0,
+            "max": 3400.0
+        },
+        {
+            "current": 800.0,
+            "min": 800.0,
+            "max": 3400.0
+        },
+        {
+            "current": 800.0,
+            "min": 800.0,
+            "max": 3400.0
+        },
+        {
+            "current": 800.0,
+            "min": 800.0,
+            "max": 3400.0
+        },
+        {
+            "current": 3400.0,
+            "min": 800.0,
+            "max": 3400.0
+        },
+        {
+            "current": 800.0,
+            "min": 800.0,
+            "max": 3400.0
+        },
+        {
+            "current": 800.0,
+            "min": 800.0,
+            "max": 3400.0
+        },
+        {
+            "current": 800.0,
+            "min": 800.0,
+            "max": 3400.0
+        },
+        {
+            "current": 3400.0,
+            "min": 800.0,
+            "max": 3400.0
+        },
+        {
+            "current": 800.0,
+            "min": 800.0,
+            "max": 3400.0
+        },
+        {
+            "current": 800.0,
+            "min": 800.0,
+            "max": 3400.0
+        },
+        {
+            "current": 3400.0,
+            "min": 800.0,
+            "max": 3400.0
+        },
+        {
+            "current": 800.0,
+            "min": 800.0,
+            "max": 3400.0
+        },
+        {
+            "current": 800.0,
+            "min": 800.0,
+            "max": 3400.0
+        },
+        {
+            "current": 800.0,
+            "min": 800.0,
+            "max": 3400.0
+        },
+        {
+            "current": 800.0,
+            "min": 800.0,
+            "max": 3400.0
+        },
+        {
+            "current": 800.0,
+            "min": 800.0,
+            "max": 3400.0
+        },
+        {
+            "current": 800.0,
+            "min": 800.0,
+            "max": 3400.0
+        },
+        {
+            "current": 800.0,
+            "min": 800.0,
+            "max": 3400.0
+        },
+        {
+            "current": 800.0,
+            "min": 800.0,
+            "max": 3400.0
+        },
+        {
+            "current": 800.0,
+            "min": 800.0,
+            "max": 3400.0
+        },
+        {
+            "current": 3400.0,
+            "min": 800.0,
+            "max": 3400.0
+        },
+        {
+            "current": 3400.0,
+            "min": 800.0,
+            "max": 3400.0
+        },
+        {
+            "current": 900.0,
+            "min": 800.0,
+            "max": 3400.0
+        },
+        {
+            "current": 800.0,
+            "min": 800.0,
+            "max": 3400.0
+        },
+        {
+            "current": 800.0,
+            "min": 800.0,
+            "max": 3400.0
+        },
+        {
+            "current": 800.0,
+            "min": 800.0,
+            "max": 3400.0
+        },
+        {
+            "current": 800.0,
+            "min": 800.0,
+            "max": 3400.0
+        },
+        {
+            "current": 800.0,
+            "min": 800.0,
+            "max": 3400.0
+        },
+        {
+            "current": 800.0,
+            "min": 800.0,
+            "max": 3400.0
+        },
+        {
+            "current": 800.0,
+            "min": 800.0,
+            "max": 3400.0
+        },
+        {
+            "current": 800.0,
+            "min": 800.0,
+            "max": 3400.0
+        },
+        {
+            "current": 800.0,
+            "min": 800.0,
+            "max": 3400.0
+        },
+        {
+            "current": 800.0,
+            "min": 800.0,
+            "max": 3400.0
+        },
+        {
+            "current": 800.0,
+            "min": 800.0,
+            "max": 3400.0
+        },
+        {
+            "current": 800.0,
+            "min": 800.0,
+            "max": 3400.0
+        },
+        {
+            "current": 3400.0,
+            "min": 800.0,
+            "max": 3400.0
+        },
+        {
+            "current": 800.0,
+            "min": 800.0,
+            "max": 3400.0
+        },
+        {
+            "current": 800.0,
+            "min": 800.0,
+            "max": 3400.0
+        },
+        {
+            "current": 800.0,
+            "min": 800.0,
+            "max": 3400.0
+        },
+        {
+            "current": 800.0,
+            "min": 800.0,
+            "max": 3400.0
+        },
+        {
+            "current": 800.0,
+            "min": 800.0,
+            "max": 3400.0
+        },
+        {
+            "current": 800.0,
+            "min": 800.0,
+            "max": 3400.0
+        },
+        {
+            "current": 800.0,
+            "min": 800.0,
+            "max": 3400.0
+        },
+        {
+            "current": 800.0,
+            "min": 800.0,
+            "max": 3400.0
+        },
+        {
+            "current": 800.0,
+            "min": 800.0,
+            "max": 3400.0
+        },
+        {
+            "current": 800.0,
+            "min": 800.0,
+            "max": 3400.0
+        },
+        {
+            "current": 800.0,
+            "min": 800.0,
+            "max": 3400.0
+        },
+        {
+            "current": 800.0,
+            "min": 800.0,
+            "max": 3400.0
+        },
+        {
+            "current": 3400.0,
+            "min": 800.0,
+            "max": 3400.0
+        },
+        {
+            "current": 800.0,
+            "min": 800.0,
+            "max": 3400.0
+        },
+        {
+            "current": 800.0,
+            "min": 800.0,
+            "max": 3400.0
+        },
+        {
+            "current": 800.0,
+            "min": 800.0,
+            "max": 3400.0
+        }
+    ],
+    "disk": {
+        "/": {
+            "total": 49.9755859375,
+            "used": 22.02953338623047
+        }
+    },
+    "gpu": "NVIDIA A100-SXM4-80GB",
+    "gpu_count": 8,
+    "gpu_devices": [
+        {
+            "name": "NVIDIA A100-SXM4-80GB",
+            "memory_total": 85899345920
+        },
+        {
+            "name": "NVIDIA A100-SXM4-80GB",
+            "memory_total": 85899345920
+        },
+        {
+            "name": "NVIDIA A100-SXM4-80GB",
+            "memory_total": 85899345920
+        },
+        {
+            "name": "NVIDIA A100-SXM4-80GB",
+            "memory_total": 85899345920
+        },
+        {
+            "name": "NVIDIA A100-SXM4-80GB",
+            "memory_total": 85899345920
+        },
+        {
+            "name": "NVIDIA A100-SXM4-80GB",
+            "memory_total": 85899345920
+        },
+        {
+            "name": "NVIDIA A100-SXM4-80GB",
+            "memory_total": 85899345920
+        },
+        {
+            "name": "NVIDIA A100-SXM4-80GB",
+            "memory_total": 85899345920
+        }
+    ],
+    "memory": {
+        "total": 1007.3580055236816
+    }
+}
