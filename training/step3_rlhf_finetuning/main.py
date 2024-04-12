@@ -419,6 +419,11 @@ def parse_args():
         action="store_true",
         default=False,
     )
+    parser.add_argument(
+        "--twostages",
+        default=True,
+        type=bool
+    )
 
     parser = deepspeed.add_config_arguments(parser)
     args = parser.parse_args()
@@ -557,6 +562,9 @@ def main():
                                    args.per_device_training_batch_size)
     unsup_mini_dataset = MiniDataset(args.generation_batches,
                                      args.per_device_training_batch_size)
+    if args.twostages:
+        second_exp_mini_dataset = MiniDataset(args.generation_batches,
+                                   args.per_device_training_batch_size)
 
     # Train!
     print_rank_0(
@@ -608,6 +616,7 @@ def main():
                     [[None] * args.per_device_generation_batch_size])
 
             exp_dataset = exp_mini_dataset.add(out[0])
+            second_exp_dataset = second_exp_mini_dataset.add(out[1])
 
             if exp_dataset is not None:
                 inner_iter = 0
@@ -719,6 +728,118 @@ def main():
                                             trainer.adv_cnt.item(),
                                             global_step=step)
                     writer.flush()
+                    
+            if second_exp_dataset is not None:
+                inner_iter = 0
+                actor_loss_sum, critic_loss_sum, unsup_loss_sum = 0, 0, 0
+                average_reward = 0
+                iter_results = defaultdict(float)
+
+                if args.actor_gradient_checkpointing:
+                    rlhf_engine.actor.gradient_checkpointing_enable()
+
+                for ppo_ep in range(args.ppo_epochs):
+                    for i, (exp_data, unsup_data) in enumerate(
+                            zip(second_exp_dataset, unsup_dataset)):
+                        actor_loss, critic_loss, others = trainer.train_rlhf(exp_data)
+                        
+                        for k, v in others.items():
+                            iter_results[k] += v
+                            
+                        actor_loss_sum += actor_loss.detach()
+                        critic_loss_sum += critic_loss.detach()
+                        average_reward += exp_data["rewards"].mean()
+                        
+
+                        if unsupervised_training_enabled:
+                            unsup_loss = trainer.train_unsupervised(
+                                unsup_data, args.unsup_coef)
+                            unsup_loss_sum += unsup_loss.item()
+
+                        inner_iter += 1
+                        if args.enable_ema:
+                            moving_average(rlhf_engine.actor,
+                                           rlhf_engine.actor_ema,
+                                           zero_stage=args.actor_zero_stage)
+
+                    random.shuffle(exp_dataset)
+                    random.shuffle(unsup_dataset)
+
+                end = time.time()
+                training_time = end - training_start
+                e2e_time = training_time + trainer.generate_time * args.generation_batches  # it is an approximation, we did not include, e.g., rw forward time etc
+                
+                actor_loss_sum = get_all_reduce_mean(actor_loss_sum).item()
+                critic_loss_sum = get_all_reduce_mean(critic_loss_sum).item()
+                for k, v in iter_results.items():
+                    iter_results[k] = get_all_reduce_mean(v).item()
+                
+                print_rank_0(
+                    f'Epoch: {epoch} | Step: {step} | PPO Epoch: {ppo_ep+1} | Stage 2 Actor Loss: {actor_loss_sum/inner_iter} | Stage2 Critic Loss: {critic_loss_sum/inner_iter} | Unsupervised Loss: {unsup_loss_sum/inner_iter}',
+                    args.global_rank)
+                print_throughput_step3(rlhf_engine.actor.module,
+                                       rlhf_engine.critic, args, e2e_time,
+                                       trainer.generate_time, training_time,
+                                       args.global_rank)
+
+                average_reward = get_all_reduce_mean(average_reward).item()
+                step_average_reward += average_reward / args.gradient_accumulation_steps_actor
+                if (step + 1) % args.gradient_accumulation_steps_actor == 0:
+                    ema_reward_score.update(step_average_reward)
+                    step_average_reward = 0.
+
+                print_rank_0(
+                    f"Stage 2 Average reward score: {average_reward/inner_iter} | Stage 2 EMA reward score: {ema_reward_score.get()}",
+                    args.global_rank)
+                print_rank_0(
+                    "-------------------------------------------------------------------------------------",
+                    args.global_rank)
+
+                if args.enable_tensorboard and torch.distributed.get_rank(
+                ) == 0:
+                    writer.add_scalar('train_ppo/second_stage_reward',
+                                      average_reward / inner_iter,
+                                      global_step=step)
+                    writer.add_scalar('train_ppo/second_stage_actor_loss',
+                                      actor_loss.item(),
+                                      global_step=step)
+                    writer.add_scalar('train_ppo/second_stage_actor_loss_sum',
+                                      actor_loss_sum / inner_iter,
+                                      global_step=step)
+                    writer.add_scalar('train_ppo/second_stage_critic_loss',
+                                      critic_loss.item(),
+                                      global_step=step)
+                    writer.add_scalar('train_ppo/second_stage_critic_loss_sum',
+                                      critic_loss_sum / inner_iter,
+                                      global_step=step)
+                    
+                    # wandb.log({
+                    #     'train_ppo/reward': average_reward / inner_iter,
+                    #     'train_ppo/actor_loss': actor_loss.item(),
+                    #     'train_ppo/actor_loss_sum': actor_loss_sum / inner_iter,
+                    #     'train_ppo/critic_loss': critic_loss.item(),
+                    #     'train_ppo/critic_loss_sum': critic_loss_sum / inner_iter
+                    # })
+                    
+                    for k, v in iter_results.items():
+                        writer.add_scalar(f'train_ppo/{k}',
+                                          v / inner_iter,
+                                          global_step=step)
+                        # wandb.log({
+                        #     f'train_ppo/{k}': v / inner_iter
+                        # })
+                    if trainer.reward_scaling:
+                        writer.add_scalar("train_ppo/second_stage_reward_mean",
+                                          trainer.adv_mean.item(),
+                                          global_step=step)
+                        writer.add_scalar("train_ppo/second_stage_reward_adv",
+                                            trainer.adv_var.item(),
+                                            global_step=step)
+                        writer.add_scalar("train_ppo/second_stage_reward_cnt",
+                                            trainer.adv_cnt.item(),
+                                            global_step=step)
+                    writer.flush()
+
 
             if args.actor_gradient_checkpointing:
                 rlhf_engine.actor.gradient_checkpointing_disable()

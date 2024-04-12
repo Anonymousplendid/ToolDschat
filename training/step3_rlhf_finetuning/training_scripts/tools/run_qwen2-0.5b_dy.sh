@@ -10,7 +10,7 @@ ACTOR_MODEL_PATH=/aiarena/gpfs/models/qwen2-4b
 CRITIC_MODEL_PATH=/aiarena/gpfs/models/qwen2-0.5b
 ACTOR_ZERO_STAGE=2
 CRITIC_ZERO_STAGE=2
-OUTPUT=/aiarena/gpfs/tools/output/qwen2_attemp2
+OUTPUT=/aiarena/gpfs/tools/output/qwen2_attemp3
 
 export TORCH_EXTENSIONS_DIR=/aiarena/gpfs/extension
 export PYTHONPATH=/aiarena/gpfs/tools/tool_jh

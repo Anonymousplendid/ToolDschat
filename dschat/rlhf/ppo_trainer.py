@@ -288,6 +288,7 @@ class DeepSpeedPPOTrainer():
             "attention_mask": attention_mask
         }
         
+     # save answer part to train.   
     def generate_answer_with_tool_result(self, prompts, mask, step, labels):
         prompts = prompts.to(get_accelerator().current_device_name())
         mask = mask.to(get_accelerator().current_device_name())
@@ -303,7 +304,7 @@ class DeepSpeedPPOTrainer():
             output = self.actor_model(seq, attention_mask=attention_mask)
             output_ref = self.ref_model(seq, attention_mask=attention_mask)
             
-            # TODO: reward score generation
+            # reward score generation
             reward_score = self.reward_model(seq, self.prompt_length, self.tokenizer, labels)
             
             values = self.critic_model.forward_value(
@@ -329,7 +330,7 @@ class DeepSpeedPPOTrainer():
     
 
 
-    # TODO: split experience generating into 2 parts. get reward at second part, get exp first part
+    # split experience generating into 2 parts. get reward at second part, get exp first part
     def generate_experience(self, prompts, mask, step, targets=None, result_prompt=None):
         generate_start = time.time()
         exp1 = self.generate_tool_use(prompts, mask, step)
@@ -353,12 +354,13 @@ class DeepSpeedPPOTrainer():
                 exp1["rewards"] = torch.tensor([self.reward_model.BAD_REWARD], dtype=torch.float, device=seq.device)
                 return exp1, None
             new_prompts.append(new_prompt)
-        # TODO: max_seq_len
+        # max_seq_len
         new_prompts_id = self.tokenizer(new_prompts, 
                                         max_length=1024,
                                         padding=False,
                                         truncation=True,
                                         return_tensors="pt")
+        # answer part save as training
         exp2 = self.generate_answer_with_tool_result(new_prompts_id["input_ids"], new_prompts_id["attention_mask"], step, targets)
         if exp2 is None:
             return self.last_generated_experience

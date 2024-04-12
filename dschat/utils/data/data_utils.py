@@ -671,12 +671,20 @@ class MiniDataset:
         self.small_batch_size = small_batch_size
 
     def seperate(self):
+        flag = 0
+        for item in self.dataset:
+            if item is not None:
+                flag = 1
+        if not flag:
+            return None
         small_dataset = []
         for large_batch in self.dataset:
             if type(large_batch) == list or type(large_batch) == tuple:
                 large_size = len(large_batch[0])
             elif type(large_batch) == dict:
                 large_size = len(large_batch[list(large_batch.keys())[0]])
+            elif large_batch is None:
+                continue
             else:
                 large_size = len(large_batch)
             for i in range(0, large_size, self.small_batch_size):
@@ -696,10 +704,15 @@ class MiniDataset:
         return small_dataset
 
     def add(self, data):
+        if data is None:
+            return None
         if len(self.dataset) < self.max_size:
             self.dataset.append(data)
             if len(self.dataset) == self.max_size:
-                return self.seperate()
+                returned = self.seperate()
+                self.free()
+                return returned
+            
             else:
                 return None
         else:
